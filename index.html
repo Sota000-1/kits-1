@@ -1,315 +1,236 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ツール</title>
-  <link rel="stylesheet" href="assets/css/style.css" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>動画解析＆圧縮理論値・実測値 比較ツール</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 20px; background-color: #f8f9fa; color: #333; }
+    .container { max-width: 960px; margin: auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h1 { font-size: 24px; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+    h2 { font-size: 18px; margin-top: 25px; border-left: 4px solid #007bff; padding-left: 8px; }
+    .input-section { margin-bottom: 20px; background: #eef2f7; padding: 15px; border-radius: 6px; }
+    .row { display: flex; gap: 20px; flex-wrap: wrap; }
+    .col { flex: 1; min-width: 300px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f1f3f5; width: 45%; }
+    .info-box { background: #e8f4fd; border-left: 4px solid #1971c2; padding: 12px; margin-top: 15px; border-radius: 4px; }
+    .suggestion-box { background: #fff9db; border-left: 4px solid #f59f00; padding: 12px; margin-top: 15px; border-radius: 4px; }
+    .chart-container { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px; }
+    .chart-box { flex: 1; min-width: 280px; max-width: 450px; background: #fff; padding: 10px; border: 1px solid #eee; border-radius: 6px; }
+  </style>
 </head>
 <body>
-    <!-- ローディング画面 -->
-<div id="loader">
-  <div id="loader-inner">
-    <div class="progress-ring">
-      <svg viewBox="0 0 120 120">
-        <defs>
-          <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-  <stop offset="0%" stop-color="#6fd2ff" />   <!-- 明るい青 -->
-  <stop offset="100%" stop-color="#da70f5" /> <!-- 明るい紫ピンク -->
-</linearGradient>
 
-        </defs>
-        <circle class="bg" cx="60" cy="60" r="54" />
-        <circle class="fg" cx="60" cy="60" r="54" stroke="url(#grad1)" />
-      </svg>
-      <div id="loader-text">0%</div>
+<div class="container">
+  <h1>🎬 動画解析＆圧縮理論値・実測値 比較ツール</h1>
+
+  <div class="input-section">
+    <label><strong>1. 動画ファイルを選択:</strong></label><br>
+    <input type="file" id="videoFileInput" accept="video/*" style="margin: 8px 0;"><br><br>
+    
+    <div class="row">
+      <div class="col">
+        <label>動画のタイトル (任意):</label><br>
+        <input type="text" id="customTitle" style="width: 100%; padding: 6px;" placeholder="タイトルを入力">
+      </div>
+      <div class="col">
+        <label>フレームレート (fps推定値・変更可能):</label><br>
+        <input type="number" id="customFps" value="30" step="0.1" style="width: 100px; padding: 6px;"> fps
+      </div>
     </div>
-    <div id="loader-subtext">Loading...</div>
-  </div>
-</div>
-
-  <header class="header">
-    <input type="checkbox" id="menu" />
-    <label for="menu" class="menu">
-      <span></span>
-      <span></span>
-      <span></span>
-    </label>
-    <div class="logo"><img src="assets/images/logo.svg" width="32px"></div>
-    <nav class="nav">
-      <a href="about.html">about</a>
-      <a href="index.html">tools</a>
-      <a href="#">blog</a>
-      <a href="#">link</a>
-      <a href="contact.html">contact</a>
-    </nav>
-    <button id="settings-btn" class="settings-btn">
-      <i class="fas fa-cog"></i>
-    </button>
-
-  </header>
-
-  <main class="main">
-    <!-- サイドバー -->
-    <aside id="sidebar" class="sidebar">
-      <div class="sidebar__title">tools</div>
-      <ul class="sidebar__menu">
-        <li><a href="#">APAスタイル作成</a></li>
-        <li><a href="#">時計</a></li>
-        <li><a href="#">タイマー</a></li>
-        <li><a href="#">ストップウォッチ</a></li>
-        <li><a href="#">グループ分け</a></li>
-        <li><a href="#">単位変換</a></li>
-        <li><a href="#">縦書きエディタ</a></li>
-        <li><a href="#">訓読文エディタ</a></li>
-        <li><a href="#">文字カウント</a></li>
-        <li><a href="#">todoリスト</a></li>
-        <li><a href="#">電卓</a></li>
-        <li><a href="#">ポモドーロ時計</a></li>
-        <li><a href="#">数字読み方変換</a></li>
-        <li><a href="#">メモ帳</a></li>
-        <li><a href="#">カウンター</a></li>
-        <li><a href="#">LaTeX</a></li>
-      </ul>
-    </aside>
-
-
-        <div class="content" id="content">
-      <div class="grid">
-  <div class="square">
-    <a href="apa.html" class="black">
-      <figure>
-        <img src="assets/images/apa.png" alt="" width="100%" />
-      </figure>
-      <div class="text-parts">
-        <h4>APAスタイル作成</h4>
-        <p>APAスタイルで引用文献を作成できます。</p>
-      </div>
-    </a>
-  </div>
-    <div class="square">
-     <a href="clock.html" class="black">
-      <figure>
-        <img src="assets/images/clock.png" alt="" width="100%" />
-      </figure>
-      <div class="text-parts">
-        <h4>時計</h4>
-        <p>現在時刻を見ることができます。</p>
-      </div>
-     </a>
-  </div>
-  <div class="square">
-    <a href="timer.html" class="black">
-      <figure>
-        <img src="assets/images/timer.svg" alt="" width="100%" />
-      </figure>
-      <div class="text-parts">
-        <h4>タイマー</h4>
-        <p>音のなるタイマーです。</p>
-      </div>
-    </a>
-  </div>
-
-  <div class="square">
-    <a href="stopwatch.html" class="black">
-      <figure>
-        <img src="assets/images/stopwatch.svg" alt="" width="100%" />
-      </figure>
-      <div class="text-parts">
-        <h4>ストップウォッチ</h4>
-        <p>無制限にラップをとれます。</p>
-      </div>
-    </a>
-  </div>
-
-  <div class="square">
-    <a href="group.html" class="black">
-      <figure>
-        <img src="assets/images/group.svg" alt="" width="100%" />
-      </figure>
-      <div class="text-parts">
-        <h4>グループ分け</h4>
-        <p>名前や出席番号によりグループ分けができます。</p>
-      </div>
-    </a>
-  </div>
-
-  <div class="square">
-    <a href="conversion.html" class="black">
-      <figure>
-        <img src="assets/images/conversion.svg" alt="" width="100%" />
-      </figure>
-      <div class="text-parts">
-        <h4>単位変換ツール</h4>
-        <p>様々な単位を別の単位に変換することができます。</p>
-      </div>
-    </a>
-  </div>
-
-  <div class="square">
-    <a href="vertical.html" class="black">
-      <figure>
-        <img src="assets/images/vertical.png" alt="" width="100%" />
-      </figure>
-      <div class="text-parts">
-        <h4>縦書きエディタ</h4>
-        <p>
-          縦書きで書くことができます。<br />Googleドキュメントと同じように書くことができます。
-        </p>
-      </div>
-    </a>
-  </div>
-
-  <div class="square">
-    <a href="kundoku.html" class="black">
-      <figure>
-        <img src="assets/images/kundoku.svg" alt="" width="100%" />
-      </figure>
-      <div class="text-parts">
-        <h4>訓読文エディタ</h4>
-        <p>漢文に返り点と送り仮名を追加することができます。</p>
-      </div>
-    </a>
-  </div>
-
-  <div class="square">
-    <a href="charcount.html" class="black">
-      <figure>
-        <img src="assets/images/charcount.svg" alt="" width="100%" />
-      </figure>
-      <div class="text-parts">
-        <h4>文字カウント</h4>
-        <p>文字数をカウントできます。</p>
-      </div>
-    </a>
-  </div>
-
-  <div class="square">
-    <a href="todo.html" class="black">
-      <figure>
-        <img src="assets/images/todo.png" alt="" width="100%" />
-      </figure>
-      <div class="text-parts">
-        <h4>todoリスト</h4>
-        <p>やることを記録し、管理することができます。</p>
-      </div>
-    </a>
-  </div>
-
-  <div class="square">
-    <a href="calculator.html" class="black">
-      <figure>
-        <img src="assets/images/calculator.svg" alt="" width="100%" />
-      </figure>
-      <div class="text-parts">
-        <h4>電卓</h4>
-        <p>シンプルな電卓です。</p>
-      </div>
-    </a>
-  </div>
-
-  <div class="square">
-    <a href="pomodoro.html" class="black">
-      <figure>
-        <img src="assets/images/pomodoro.svg" alt="" width="100%" />
-      </figure>
-      <div class="text-parts">
-        <h4>ポモドーロ時計</h4>
-        <p>自分に合った作業・休憩時間を設定できます。</p>
-      </div>
-    </a>
-  </div>
-
-  <div class="square">
-    <a href="number.html" class="black">
-      <figure>
-        <img src="assets/images/number.svg" alt="" width="100%" />
-      </figure>
-      <div class="text-parts">
-        <h4>数字→読み方変換</h4>
-        <p>長い数字を日本語の読み方にします。<br />例:200010000→2億1万</p>
-      </div>
-    </a>
-  </div>
-
-  <div class="square">
-    <a href="https://memo.kits-tools.net/" class="black">
-      <figure>
-        <img src="assets/images/memo.svg" alt="" width="100%" />
-      </figure>
-      <div class="text-parts">
-        <h4>メモ帳</h4>
-        <p>マークダウン対応のメモ帳です。</p>
-      </div>
-    </a>
-  </div>
-
-  <div class="square">
-    <a href="count.html" class="black">
-      <figure>
-        <img src="assets/images/count.svg" alt="" width="100%" />
-      </figure>
-      <div class="text-parts">
-        <h4>カウンター</h4>
-        <p>数字を数えることができます。</p>
-      </div>
-    </a>
-  </div>
-
-  <div class="square">
-    <a href="latex.html" class="black">
-      <figure>
-        <img src="assets/images/latex.svg" alt="" width="100%" />
-      </figure>
-      <div class="text-parts">
-        <h4>LaTeX</h4>
-        <p>LaTeXで数式を入力できます。</p>
-      </div>
-    </a>
-  </div>
-      </div>
-
-      <div class="side-content">
-  <div id="clock" class="clock">2025年5月17日（日）<br>0:00:00</div>
-  <div class="todo-list">
-    <h2>todo list</h2>
-    <ul>
-      <li>例: 買い物</li>
-    </ul>
-  </div>
-</div>
-      
+    <div style="margin-top: 10px;">
+      <label>動画の概要 (任意):</label><br>
+      <textarea id="customDesc" style="width: 100%; height: 50px; padding: 6px;" placeholder="動画の簡単な概要"></textarea>
     </div>
-  </main>
-<div id="settings-overlay" class="settings-overlay hidden">
-  <div id="settings-panel" class="settings-panel">
-    <button id="settings-close" class="close-btn">&times;</button>
-    <h2>表示設定</h2>
-    <label><input type="checkbox" id="toggle-clock" checked> 時計を表示</label><br>
-    <label><input type="checkbox" id="toggle-todo" checked> ToDoリストを表示</label><br><br>
+  </div>
 
-    <label>ツールの列数：
-      <select id="column-count"></select>
-    </label><br><br>
+  <div id="resultArea" style="display: none;">
+    <div class="row">
+      <!-- 基本情報 -->
+      <div class="col">
+        <h2>📋 基本情報</h2>
+        <table>
+          <tr><th>動画タイトル</th><td id="resTitle">-</td></tr>
+          <tr><th>概要</th><td id="resDesc">-</td></tr>
+          <tr><th>再生時間</th><td id="resDuration">-</td></tr>
+          <tr><th>解像度</th><td id="resResolution">-</td></tr>
+          <tr><th>フレームレート</th><td id="resFps">-</td></tr>
+          <tr><th>音声標本化周波数</th><td id="resAudioRate">-</td></tr>
+          <tr><th>音声チャンネル数</th><td id="resAudioChannels">-</td></tr>
+        </table>
+      </div>
 
-    <label>時計サイズ：
-      <input type="range" id="clock-size" min="1" max="2" step="0.1" value="1">
-    </label><br><br>
+      <!-- サイズ・理論値情報 -->
+      <div class="col">
+        <h2>💾 ファイルサイズと理論値</h2>
+        <table>
+          <tr><th>実測値</th><td id="resActualSize" style="font-weight: bold; color: #d9480f;">-</td></tr>
+          <tr><th>非圧縮理論値 (合計)</th><td id="resTotalTheoretical" style="font-weight: bold; color: #1c7ed6;">-</td></tr>
+          <tr><th>├ 映像の理論値</th><td id="resVideoTheoretical">-</td></tr>
+          <tr><th>└ 音声の理論値</th><td id="resAudioTheoretical">-</td></tr>
+          <tr><th>誤差率・圧縮比 (実測/理論)</th><td id="resCompressionRatio">-</td></tr>
+          <tr><th>削減率 (圧縮効果)</th><td id="resReductionRate">-</td></tr>
+        </table>
+      </div>
+    </div>
 
-    <label>ToDoサイズ：
-      <input type="range" id="todo-size" min="1" max="2" step="0.1" value="1">
-    </label>
+    <!-- グラフエリア -->
+    <h2>📊 グラフ表示</h2>
+    <div class="chart-container">
+      <div class="chart-box">
+        <canvas id="pieChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <canvas id="barChart"></canvas>
+      </div>
+    </div>
+
+    <!-- 説明と提案 -->
+    <h2>🔍 理論値と実測値の差についての説明</h2>
+    <div class="info-box" id="diffExplanation"></div>
+
+    <h2>💡 ファイルサイズを小さくするための方法</h2>
+    <div class="suggestion-box">
+      <ol style="margin: 0; padding-left: 20px; line-height: 1.6;">
+        <li><strong>高効率コーデック (H.265 / AV1) の採用:</strong> 旧来の H.264 より同画質で30〜50%容量を削減できます。</li>
+        <li><strong>CRF（品質基準値）によるビットレート削減:</strong> 動きの少ないシーンのデータ割り当てを間引き、全体のサイズを抑えます。</li>
+        <li><strong>解像度の最適化:</strong> 4K動画をフルHD (1080p) やHD (720p) に縮小すると、ピクセル総数が激減し容量が大幅に減ります。</li>
+        <li><strong>フレームレートの引き下げ:</strong> 60fpsから30fpsや24fpsに落とすことで、フレーム数が半減しサイズを抑制できます。</li>
+        <li><strong>音声ビットレートの圧縮:</strong> AAC 128kbps〜96kbpsへの変更や、不要なサラウンド音声をステレオ(2ch)に統一します。</li>
+      </ol>
+    </div>
   </div>
 </div>
 
-  <footer>
-    <p>© 2024 Kaisei Information Technology for support</p>
-  </footer>
+<script>
+  let pieChartInstance = null;
+  let barChartInstance = null;
 
-  <!-- トップへ戻るボタン -->
-  <button id="to-top">↑</button>
+  function formatBytes(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
 
-  <script src="assets/js/script.js"></script>
+  document.getElementById('videoFileInput').addEventListener('change', async function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const customTitle = document.getElementById('customTitle').value;
+    const customDesc = document.getElementById('customDesc').value;
+    const fps = parseFloat(document.getElementById('customFps').value) || 30;
+
+    // ファイルサイズ(実測値)
+    const actualSize = file.size;
+
+    // 動画メタデータの取得 (Video要素)
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.src = URL.createObjectURL(file);
+
+    video.onloadedmetadata = async function() {
+      const duration = video.duration;
+      const width = video.videoWidth;
+      const height = video.videoHeight;
+
+      // 音声メタデータの取得 (Web Audio API)
+      let sampleRate = 48000;
+      let channels = 2;
+      try {
+        const arrayBuffer = await file.slice(0, 1024 * 1024 * 2).arrayBuffer(); // 先頭の一部をデコード試行
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const decoded = await audioCtx.decodeAudioData(arrayBuffer);
+        sampleRate = decoded.sampleRate;
+        channels = decoded.numberOfChannels;
+      } catch (err) {
+        // デコードできなかった場合は標準値（44.1kHz, 2ch）を採用
+        sampleRate = 44100;
+        channels = 2;
+      }
+
+      // 非圧縮理論値の計算
+      // 映像: 幅 × 高さ × 3バイト(RGB 24bit) × fps × 秒
+      const videoTheoSize = width * height * 3 * fps * duration;
+      // 音声: サンプル周波数 × 2バイト(16bit) × チャンネル数 × 秒
+      const audioTheoSize = sampleRate * 2 * channels * duration;
+      const totalTheoSize = videoTheoSize + audioTheoSize;
+
+      // 誤差率・圧縮率
+      const ratio = (actualSize / totalTheoSize) * 100;
+      const reduction = 100 - ratio;
+
+      // 結果を反映
+      document.getElementById('resTitle').innerText = customTitle ? customTitle : file.name;
+      document.getElementById('resDesc').innerText = customDesc ? customDesc : '（未設定）';
+      document.getElementById('resDuration').innerText = `${duration.toFixed(2)} 秒 (${Math.floor(duration/60)}分${Math.floor(duration%60)}秒)`;
+      document.getElementById('resResolution').innerText = `${width} × ${height} px`;
+      document.getElementById('resFps').innerText = `${fps} fps`;
+      document.getElementById('resAudioRate').innerText = `${sampleRate} Hz`;
+      document.getElementById('resAudioChannels').innerText = `${channels} ch`;
+
+      document.getElementById('resActualSize').innerText = formatBytes(actualSize);
+      document.getElementById('resTotalTheoretical').innerText = formatBytes(totalTheoSize);
+      document.getElementById('resVideoTheoretical').innerText = formatBytes(videoTheoSize);
+      document.getElementById('resAudioTheoretical').innerText = formatBytes(audioTheoSize);
+      document.getElementById('resCompressionRatio').innerText = `${ratio.toFixed(4)} % (残存率)`;
+      document.getElementById('resReductionRate').innerText = `${reduction.toFixed(4)} % 削減`;
+
+      // 差の説明
+      document.getElementById('diffExplanation').innerHTML = `
+        非圧縮理論値（<strong>${formatBytes(totalTheoSize)}</strong>）に対し、実測値（<strong>${formatBytes(actualSize)}</strong>）は約 <strong>${reduction.toFixed(2)}%</strong> 削減されています。<br>
+        この大きな差は、現代の動画圧縮（H.264など）が<strong>「前のコマから動いていない部分の再利用」</strong>や<strong>「人間の目・耳に知覚できない微細情報のカット」</strong>を高効率に行っているためです。
+      `;
+
+      // グラフ描画
+      renderCharts(videoTheoSize, audioTheoSize, actualSize, totalTheoSize);
+
+      document.getElementById('resultArea').style.display = 'block';
+    };
+  });
+
+  function renderCharts(videoTheo, audioTheo, actual, theo) {
+    // 円グラフ (映像 vs 音声)
+    const ctxPie = document.getElementById('pieChart').getContext('2d');
+    if (pieChartInstance) pieChartInstance.destroy();
+    pieChartInstance = new Chart(ctxPie, {
+      type: 'pie',
+      data: {
+        labels: ['映像データ', '音声データ'],
+        datasets: [{
+          data: [videoTheo, audioTheo],
+          backgroundColor: ['#339af0', '#20c997']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { title: { display: true, text: '非圧縮理論値の内訳 (画像 vs 音声)' } }
+      }
+    });
+
+    // 棒グラフ (実測値 vs 理論値)
+    const ctxBar = document.getElementById('barChart').getContext('2d');
+    if (barChartInstance) barChartInstance.destroy();
+    barChartInstance = new Chart(ctxBar, {
+      type: 'bar',
+      data: {
+        labels: ['実測値', '非圧縮理論値'],
+        datasets: [{
+          label: 'データ容量 (MB)',
+          data: [(actual / (1024*1024)).toFixed(2), (theo / (1024*1024)).toFixed(2)],
+          backgroundColor: ['#fd7e14', '#fa5252']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { title: { display: true, text: '実測値と理論値の比較 (MB)' } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  }
+</script>
 </body>
 </html>
